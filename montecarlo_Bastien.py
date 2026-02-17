@@ -1,64 +1,93 @@
-
-
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import easy21_Bastien  # Assurez-vous que le fichier easy21.py est dans le même dossier
+import pickle
+
+# Constantes
+N0 = 100
+NUM_EPISODES = 500000  # Nombre élevé pour converger vers la "Vérité Terrain" Q*
 
 class MonteCarloAgent:
-    def __init__(self, n_states, n_actions, gamma=0.99, n0=100):
-        self.n_states = n_states
-        self.n_actions = n_actions
-        self.gamma = gamma
-        self.n0 = n0  # La constante N0 (ajustable)
-        
-        # Initialisation de la Q-table avec des zéros
-        self.q_table = np.zeros((n_states, n_actions))
-        
-        # Initialisation de la table de comptage N(s, a)
-        self.n_count = np.zeros((n_states, n_actions))
+    def __init__(self):
+        # Q-table: dealer (1-10) -> index 0-9, player (1-21) -> index 0-20, actions (2)
+        self.q_table = np.zeros((10, 21, 2))
+        self.n_state = np.zeros((10, 21))     # N(s)
+        self.n_state_action = np.zeros((10, 21, 2)) # N(s,a)
 
-    def get_epsilon(self, state):
-        """
-        Calcule epsilon selon la formule : N0 / (N0 + N(s))
-        N(s) est la somme des visites de toutes les actions dans cet état.
-        """
-        n_s = np.sum(self.n_count[state, :]) # N(s)
-        epsilon = self.n0 / (self.n0 + n_s)
-        return epsilon
+    def get_action(self, state):
+        """Stratégie Epsilon-Greedy dépendante de N0"""
+        d_idx, p_idx = state[0]-1, state[1]-1
+        # Epsilon_t = N0 / (N0 + N(s_t)) [cite: 39]
+        epsilon = N0 / (N0 + self.n_state[d_idx, p_idx])
+        
+        if np.random.random() < epsilon:
+            return np.random.randint(0, 2)
+        else:
+            # En cas d'égalité, on mélange pour éviter un biais
+            values = self.q_table[d_idx, p_idx, :]
+            return np.random.choice(np.flatnonzero(values == values.max()))
 
-    def choose_action(self, state):
-        """
-        Stratégie epsilon-greedy avec epsilon variable
-        """
-        epsilon = self.get_epsilon(state)
-        
-        # Exploration : on tire un nombre aléatoire
-        if np.random.rand() < epsilon:
-            return np.random.randint(self.n_actions)
-        
-        # Exploitation : on prend la meilleure action (argmax)
-        # Note : on utilise une petite astuce pour casser les égalités aléatoirement
-        # au lieu de toujours prendre le premier index en cas d'égalité.
-        max_q = np.max(self.q_table[state, :])
-        actions_with_max_q = np.where(self.q_table[state, :] == max_q)[0]
-        return np.random.choice(actions_with_max_q)
+    def train(self, episodes):
+        for _ in range(episodes):
+            trajectory = []
+            state = easy21_Bastien.init_game()
+            terminal = False
+            
+            # 1. Générer l'épisode complet
+            while not terminal:
+                action = self.get_action(state)
+                # Incrémenter N(s) pour le calcul d'epsilon au prochain pas
+                self.n_state[state[0]-1, state[1]-1] += 1
+                
+                next_state, reward, terminal = easy21_Bastien.step(state, action)
+                trajectory.append((state, action))
+                state = next_state
+            
+            # 2. Mise à jour (Update) à la fin de l'épisode
+            # Gt est juste la reward finale car gamma=1 [cite: 27]
+            gt = reward
+            
+            for (s, a) in trajectory:
+                d_idx, p_idx = s[0]-1, s[1]-1
+                
+                self.n_state_action[d_idx, p_idx, a] += 1
+                # Alpha_t = 1 / N(s, a) [cite: 38]
+                alpha = 1.0 / self.n_state_action[d_idx, p_idx, a]
+                
+                error = gt - self.q_table[d_idx, p_idx, a]
+                self.q_table[d_idx, p_idx, a] += alpha * error
 
-    def update(self, state, action, reward, next_state):
-        """
-        Mise à jour avec pas d'apprentissage alpha variable.
-        alpha = 1 / N(s, a)
-        """
-        # 1. Incrémenter le compteur N(s, a) AVANT de calculer alpha
-        self.n_count[state, action] += 1
-        
-        # 2. Calculer le pas d'apprentissage dynamique alpha
-        # Comme on a incrémenté juste avant, n_count est au minimum 1, donc pas de division par 0.
-        alpha = 1.0 / self.n_count[state, action]
-        
-        # 3. Calculer la cible (Target) - Exemple pour Q-Learning
-        best_next_action = np.max(self.q_table[next_state, :])
-        td_target = reward + self.gamma * best_next_action
-        
-        # 4. Mise à jour de la Q-valeur
-        current_q = self.q_table[state, action]
-        td_error = td_target - current_q
-        
-        self.q_table[state, action] = current_q + alpha * td_error
+def plot_value_function(q_table):
+    """Trace V*(s) = max_a Q*(s,a) en 3D [cite: 42]"""
+    v_star = np.max(q_table, axis=2)
+    
+    dealer_range = np.arange(1, 11)
+    player_range = np.arange(1, 22)
+    X, Y = np.meshgrid(dealer_range, player_range)
+    
+    # Attention: Matplotlib attend X, Y et Z de la même forme (transpose nécessaire selon l'indexation)
+    Z = v_star.T  # Transpose pour aligner (21, 10) avec le meshgrid
+    
+    fig = plt.figure(figsize=(10, 6))
+    ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none')
+    
+    ax.set_xlabel('Dealer Showing')
+    ax.set_ylabel('Player Sum')
+    ax.set_zlabel('Value V*')
+    ax.set_title('Optimal Value Function (Monte Carlo)')
+    fig.colorbar(surf)
+    plt.show()
+
+if __name__ == "__main__":
+    print(f"Entraînement Monte-Carlo sur {NUM_EPISODES} épisodes...")
+    agent = MonteCarloAgent()
+    agent.train(NUM_EPISODES)
+    
+    # Sauvegarde de Q* pour l'exercice 3 (calcul MSE)
+    with open('q_star.pkl', 'wb') as f:
+        pickle.dump(agent.q_table, f)
+    print("Q* sauvegardé dans 'q_star.pkl'.")
+    
+    plot_value_function(agent.q_table)
