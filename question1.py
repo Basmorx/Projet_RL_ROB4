@@ -10,7 +10,7 @@ class Easy21Env:
         self.min_val = 1
         self.max_val = 10
     
-    def tire_carte(self):
+    def draw_card(self):
         """
         Tire une carte avec une valeur de 1 à 10.
         Noir (prob 2/3) -> value positive.
@@ -24,7 +24,7 @@ class Easy21Env:
         else:
             return -val
 
-    def init_jeu(self):
+    def init_game(self):
         """
         Initialisation du jeu, dealer tire et joueur aussi retourne sous forme 
         (Dealer , Joueur)
