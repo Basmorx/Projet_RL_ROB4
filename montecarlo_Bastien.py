@@ -5,7 +5,7 @@ import easy21_Bastien  # Assurez-vous que le fichier easy21.py est dans le même
 import pickle
 
 # Constantes
-N0 = 100
+N0 = 500
 NUM_EPISODES = 500000  # Nombre élevé pour converger vers la "Vérité Terrain" Q*
 
 class MonteCarloAgent:
