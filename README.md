@@ -9,7 +9,7 @@ MOREAUX Bastien
 Il s'agit d'une méthode pour trouver la policy optimale à partir de la moyenne de tous les gains cumulés obtenus à partir d'un état précis.
 
 ```bash
-python3 Exercice2.py
+python3 montecarlo.py
 ```
 
 ## Exercice 3 - Sarsa Algorithm
@@ -29,7 +29,7 @@ Ensuite on met à jour la politique Q(s, a) := Q(s, a) + ɑ[ r + γ Q(s', a') - 
 Il s'agit d'une méthode pour trouver la policy optimale à partir de la moyenne de tous les gains cumulés obtenus à partir d'un état précis.
 
 ```bash
-python3 Exercice3.py
+python3 sarsa.py
 ```
 
 
@@ -73,4 +73,4 @@ Le bootstrapping est plus utile dans le jeu easy21 car les parties sont plus lon
 
 1. On peut faire en sorte de faire décroitre le taux d'apprentissage pour garantir la convergence de la maximum value fonction vers la maximum value fonction réelle.
 
-2. 
+2. Utiliser des noyaux gaussiens pour représenter l'espace, ce qui permettrait à l'agent de mieux capturer la continuité de la somme du joueur tout en restant précis sur les zones critiques (autour de 21).

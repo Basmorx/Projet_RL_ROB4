@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import easy21_Bastien as easy21
+import easy21
 import pickle
 
 # Paramètres

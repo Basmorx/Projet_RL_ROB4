@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import easy21_Bastien 
+import easy21
 import pickle
 
 # Constantes
@@ -31,7 +31,7 @@ class MonteCarloAgent:
     def train(self, episodes):
         for _ in range(episodes):
             trajectory = []
-            state = easy21_Bastien.init_game()
+            state = easy21.init_game()
             terminal = False
             
             # 1. Générer l'épisode complet
@@ -40,7 +40,7 @@ class MonteCarloAgent:
                 # Incrémenter N(s) pour le calcul d'epsilon au prochain pas
                 self.n_state[state[0]-1, state[1]-1] += 1
                 
-                next_state, reward, terminal = easy21_Bastien.step(state, action)
+                next_state, reward, terminal = easy21.step(state, action)
                 trajectory.append((state, action))
                 state = next_state
             
