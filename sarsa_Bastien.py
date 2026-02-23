@@ -60,7 +60,7 @@ class SarsaAgent:
             # Mise à jour trace (Accumulating traces)
             self.e_trace[d_idx, p_idx, action] += 1
             
-            # Alpha variable [cite: 38, 45]
+            # Alpha variable
             alpha = 1.0 / self.n_state_action[d_idx, p_idx, action]
             
             # Mise à jour de TOUS les états via la trace
@@ -80,7 +80,7 @@ def compute_mse(q_pred, q_star):
     return np.sum((q_pred - q_star)**2)
 
 if __name__ == "__main__":
-    # Charger la vérité terrain Q* (générée par question2.py)
+    # Charger la vérité terrain Q*
     try:
         with open('q_star.pkl', 'rb') as f:
             q_star = pickle.load(f)
@@ -109,7 +109,7 @@ if __name__ == "__main__":
         if lmbda == 0.0 or lmbda == 1.0:
             learning_curves[lmbda] = mse_history
 
-    # --- Plot 1: MSE vs Lambda [cite: 50] ---
+    # --- Plot 1: MSE vs Lambda ---
     plt.figure(figsize=(10, 5))
     plt.plot(LAMBDAS, final_mses, marker='o')
     plt.title('MSE vs Lambda (après 1000 épisodes)')
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     plt.show()
     
 
-    # --- Plot 2: Learning Curves (Lambda 0 vs 1) [cite: 51] ---
+    # --- Plot 2: Learning Curves (Lambda 0 vs 1) ---
     plt.figure(figsize=(10, 5))
     plt.plot(learning_curves[0.0], label='Lambda = 0 (TD)')
     plt.plot(learning_curves[1.0], label='Lambda = 1 (Monte Carlo)')

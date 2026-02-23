@@ -63,8 +63,6 @@ Le bootstrapping est plus utile dans le jeu easy21 car les parties sont plus lon
 
 1. L'agent peut généraliser des états qu'il n'a jamais rencontré.
 
-2. 
-
 #### Iconvénients :
 
 1. La méthode avec approximation peut converger sur une solution non optimale si le taux d'apprentissage est trop élevé.

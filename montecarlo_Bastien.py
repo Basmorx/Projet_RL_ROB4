@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import easy21_Bastien  # Assurez-vous que le fichier easy21.py est dans le même dossier
+import easy21_Bastien 
 import pickle
 
 # Constantes
@@ -18,7 +18,7 @@ class MonteCarloAgent:
     def get_action(self, state):
         """Stratégie Epsilon-Greedy dépendante de N0"""
         d_idx, p_idx = state[0]-1, state[1]-1
-        # Epsilon_t = N0 / (N0 + N(s_t)) [cite: 39]
+        # Epsilon_t = N0 / (N0 + N(s_t))
         epsilon = N0 / (N0 + self.n_state[d_idx, p_idx])
         
         if np.random.random() < epsilon:
@@ -45,21 +45,21 @@ class MonteCarloAgent:
                 state = next_state
             
             # 2. Mise à jour (Update) à la fin de l'épisode
-            # Gt est juste la reward finale car gamma=1 [cite: 27]
+            # Gt est juste la reward finale car gamma=1
             gt = reward
             
             for (s, a) in trajectory:
                 d_idx, p_idx = s[0]-1, s[1]-1
                 
                 self.n_state_action[d_idx, p_idx, a] += 1
-                # Alpha_t = 1 / N(s, a) [cite: 38]
+                # Alpha_t = 1 / N(s, a)
                 alpha = 1.0 / self.n_state_action[d_idx, p_idx, a]
                 
                 error = gt - self.q_table[d_idx, p_idx, a]
                 self.q_table[d_idx, p_idx, a] += alpha * error
 
 def plot_value_function(q_table):
-    """Trace V*(s) = max_a Q*(s,a) en 3D [cite: 42]"""
+    """Trace V*(s) = max_a Q*(s,a) en 3D"""
     v_star = np.max(q_table, axis=2)
     
     dealer_range = np.arange(1, 11)
