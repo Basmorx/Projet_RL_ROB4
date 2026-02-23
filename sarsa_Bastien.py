@@ -5,8 +5,8 @@ import pickle
 
 # Paramètres
 N0 = 100
-LAMBDAS = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] # [cite: 46]
-EPISODES_PER_LAMBDA = 1000  # [cite: 46]
+LAMBDAS = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+EPISODES_PER_LAMBDA = 1000 
 
 class SarsaAgent:
     def __init__(self, lmbda):
@@ -75,7 +75,7 @@ class SarsaAgent:
             action = next_action
 
 def compute_mse(q_pred, q_star):
-    """Calcule MSE sur tous les états et actions [cite: 48]"""
+    """Calcule MSE sur tous les états et actions"""
     # MSE = sum((Q - Q*)^2)
     return np.sum((q_pred - q_star)**2)
 
@@ -116,7 +116,9 @@ if __name__ == "__main__":
     plt.xlabel('Lambda')
     plt.ylabel('Mean Squared Error')
     plt.grid(True)
+    plt.savefig('mse_vs_lambda.png')
     plt.show()
+    
 
     # --- Plot 2: Learning Curves (Lambda 0 vs 1) [cite: 51] ---
     plt.figure(figsize=(10, 5))
@@ -127,4 +129,6 @@ if __name__ == "__main__":
     plt.ylabel('MSE')
     plt.legend()
     plt.grid(True)
+    plt.savefig('learning_curves.png')
     plt.show()
+    
