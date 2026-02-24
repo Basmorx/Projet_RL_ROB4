@@ -2,14 +2,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import easy21
 import pickle
-import montecarlo as mc
 
 # Paramètres
 N0 = 100
 LAMBDAS = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 EPISODES_PER_LAMBDA = 1000 
 
-class SarsaAgent:
+def construct_coarse_coding_q_table():
+
+    phi = np.zeros
+
+    return q_table
+
+
+
+
+
+
+
+
+
+
+
+class SarsaAgent_with_coarse_coding:
     def __init__(self, lmbda):
         self.lmbda = lmbda
         self.q_table = np.zeros((10, 21, 2))
@@ -109,9 +124,6 @@ if __name__ == "__main__":
         
         if lmbda == 0.0 or lmbda == 1.0:
             learning_curves[lmbda] = mse_history
-
-
-    mc.plot_value_function(agent.q_table)
 
     # --- Plot 1: MSE vs Lambda ---
     plt.figure(figsize=(10, 5))
