@@ -111,7 +111,7 @@ if __name__ == "__main__":
             learning_curves[lmbda] = mse_history
 
 
-    mc.plot_value_function(agent.q_table)
+    
 
     # --- Plot 1: MSE vs Lambda ---
     plt.figure(figsize=(10, 5))
