@@ -13,7 +13,7 @@ class QLearningAgent:
     def __init__(self):
         self.q_table = np.zeros((10, 21, 2))
         self.n_state = np.zeros((10, 21))
-        self.n_state_action = np.zeros((10, 21, 2))
+        self.n_state_action = np.zeros((10, 21, 2)) 
         self.N0 = 100
 
     def get_action(self, state):
